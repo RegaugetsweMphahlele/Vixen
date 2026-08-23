@@ -1,0 +1,183 @@
+/* VIXEN Design System */
+:root {
+  --ink: #1B1A17;
+  --pine: #2F4438;
+  --rust: #BB5F3A;
+  --ochre: #D9A441;
+  --bone: #F5EEE1;
+  --sage: #8B9A82;
+  --bone-tint: #EDE4D3;
+}
+
+/* Font imports - Add to index.html instead */
+/* Google Fonts: Fraunces & Manrope */
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  background: var(--bone);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* Typography */
+.font-display {
+  font-family: 'Fraunces', serif;
+}
+
+.font-body {
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Utility Classes */
+.bg-ink { background-color: var(--ink); }
+.bg-pine { background-color: var(--pine); }
+.bg-rust { background-color: var(--rust); }
+.bg-ochre { background-color: var(--ochre); }
+.bg-bone { background-color: var(--bone); }
+.bg-sage { background-color: var(--sage); }
+.bg-bone-tint { background-color: var(--bone-tint); }
+
+.text-ink { color: var(--ink); }
+.text-pine { color: var(--pine); }
+.text-rust { color: var(--rust); }
+.text-ochre { color: var(--ochre); }
+.text-bone { color: var(--bone); }
+.text-sage { color: var(--sage); }
+
+/* Buttons */
+.btn-rust {
+  background-color: var(--rust);
+  color: var(--bone);
+  border: none;
+  border-radius: 9999px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-rust:hover {
+  transform: scale(1.05);
+  background-color: #a54f2f;
+  color: var(--bone);
+}
+
+.btn-ink {
+  background-color: var(--ink);
+  color: var(--bone);
+  border: none;
+  border-radius: 2px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-ink:hover {
+  background-color: #2d2b27;
+  color: var(--bone);
+}
+
+/* Cards */
+.card-vixen {
+  background: rgba(47, 68, 56, 0.3);
+  border: 1px solid rgba(245, 238, 225, 0.06);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.card-vixen:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 238, 225, 0.15);
+}
+
+/* Hairline Dividers */
+.hairline {
+  border: 0;
+  border-top: 1px solid rgba(27, 26, 23, 0.15);
+  margin: 2rem 0;
+}
+
+.hairline-light {
+  border: 0;
+  border-top: 1px solid rgba(245, 238, 225, 0.08);
+  margin: 2rem 0;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Dark Theme */
+.dark-theme {
+  background-color: var(--ink);
+  color: var(--bone);
+}
+
+.dark-theme .card-vixen {
+  background: rgba(47, 68, 56, 0.4);
+  border-color: rgba(245, 238, 225, 0.08);
+}
+
+.dark-theme .hairline-light {
+  border-color: rgba(245, 238, 225, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+}
+
+/* Form Controls - Dark Theme */
+.dark-theme .form-control {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(245, 238, 225, 0.2) !important;
+  color: #F5EEE1 !important;
+}
+
+.dark-theme .form-control:focus {
+  border-color: var(--rust) !important;
+  box-shadow: 0 0 0 2px rgba(187, 95, 58, 0.2) !important;
+}
+
+.dark-theme .form-control::placeholder {
+  color: rgba(245, 238, 225, 0.4) !important;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ink);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--pine);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rust);
+}
