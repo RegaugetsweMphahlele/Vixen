@@ -6,7 +6,7 @@ const User = {
     // FIND USER BY EMAIL
     // ==========================================
 
-    findByEmail: (email, callback) => {
+    findByEmail: async (email) => {
 
         const sql = `
             SELECT
@@ -22,7 +22,12 @@ const User = {
             WHERE email = ?
         `;
 
-        db.query(sql, [email], callback);
+        const [rows] = await db.execute(
+            sql,
+            [email]
+        );
+
+        return rows;
     },
 
 
@@ -30,7 +35,7 @@ const User = {
     // FIND USER BY ID
     // ==========================================
 
-    findById: (userId, callback) => {
+    findById: async (userId) => {
 
         const sql = `
             SELECT
@@ -45,7 +50,37 @@ const User = {
             WHERE user_id = ?
         `;
 
-        db.query(sql, [userId], callback);
+        const [rows] = await db.execute(
+            sql,
+            [userId]
+        );
+
+        return rows;
+    },
+    // ==========================================
+    // FIND ALL USERS
+    // ==========================================
+
+    findAll: async () => {
+
+        const sql = `
+            SELECT
+                user_id,
+                first_name,
+                last_name,
+                email,
+                profile_image,
+                created_at,
+                updated_at
+            FROM users
+            ORDER BY created_at DESC
+        `;
+
+        const [rows] = await db.execute(
+            sql
+        );
+
+        return rows;
     },
 
 
@@ -53,7 +88,7 @@ const User = {
     // CREATE USER
     // ==========================================
 
-    create: (user, callback) => {
+    create: async (user) => {
 
         const sql = `
             INSERT INTO users
@@ -75,7 +110,12 @@ const User = {
             user.profile_image || null
         ];
 
-        db.query(sql, values, callback);
+        const [result] = await db.execute(
+            sql,
+            values
+        );
+
+        return result;
     },
 
 
@@ -83,7 +123,7 @@ const User = {
     // UPDATE PROFILE
     // ==========================================
 
-    update: (userId, user, callback) => {
+    update: async (userId, user) => {
 
         const sql = `
             UPDATE users
@@ -103,7 +143,12 @@ const User = {
             userId
         ];
 
-        db.query(sql, values, callback);
+        const [result] = await db.execute(
+            sql,
+            values
+        );
+
+        return result;
     },
 
 
@@ -111,14 +156,19 @@ const User = {
     // DELETE USER
     // ==========================================
 
-    delete: (userId, callback) => {
+    delete: async (userId) => {
 
         const sql = `
             DELETE FROM users
             WHERE user_id = ?
         `;
 
-        db.query(sql, [userId], callback);
+        const [result] = await db.execute(
+            sql,
+            [userId]
+        );
+
+        return result;
     },
 
 
@@ -126,7 +176,7 @@ const User = {
     // UPDATE PASSWORD
     // ==========================================
 
-    updatePassword: (userId, hashedPassword, callback) => {
+    updatePassword: async (userId, hashedPassword) => {
 
         const sql = `
             UPDATE users
@@ -134,11 +184,15 @@ const User = {
             WHERE user_id = ?
         `;
 
-        db.query(
+        const [result] = await db.execute(
             sql,
-            [hashedPassword, userId],
-            callback
+            [
+                hashedPassword,
+                userId
+            ]
         );
+
+        return result;
     },
 
 
@@ -146,7 +200,11 @@ const User = {
     // SAVE RESET TOKEN
     // ==========================================
 
-    saveResetToken: (userId, token, expires, callback) => {
+    saveResetToken: async (
+        userId,
+        token,
+        expires
+    ) => {
 
         const sql = `
             UPDATE users
@@ -156,11 +214,16 @@ const User = {
             WHERE user_id = ?
         `;
 
-        db.query(
+        const [result] = await db.execute(
             sql,
-            [token, expires, userId],
-            callback
+            [
+                token,
+                expires,
+                userId
+            ]
         );
+
+        return result;
     },
 
 
@@ -168,7 +231,7 @@ const User = {
     // FIND USER BY RESET TOKEN
     // ==========================================
 
-    findByResetToken: (token, callback) => {
+    findByResetToken: async (token) => {
 
         const sql = `
             SELECT
@@ -182,11 +245,12 @@ const User = {
             AND reset_password_expires > NOW()
         `;
 
-        db.query(
+        const [rows] = await db.execute(
             sql,
-            [token],
-            callback
+            [token]
         );
+
+        return rows;
     },
 
 
@@ -194,7 +258,7 @@ const User = {
     // CLEAR RESET TOKEN
     // ==========================================
 
-    clearResetToken: (userId, callback) => {
+    clearResetToken: async (userId) => {
 
         const sql = `
             UPDATE users
@@ -204,133 +268,14 @@ const User = {
             WHERE user_id = ?
         `;
 
-        db.query(
+        const [result] = await db.execute(
             sql,
-            [userId],
-            callback
+            [userId]
         );
+
+        return result;
     }
 
 };
 
 module.exports = User;
-// const db = require('../config/database');
-
-// const User = {
-
-//     // Find a user by email
-//     findByEmail: (email, callback) => {
-//         const sql = `
-//             SELECT
-//                 user_id,
-//                 first_name,
-//                 last_name,
-//                 email,
-//                 password,
-//                 profile_image,
-//                 created_at,
-//                 updated_at
-//             FROM users
-//             WHERE email = ?
-//         `;
-
-//         db.query(sql, [email], callback);
-//     },
-
-
-//     // Find a user by ID
-//     findById: (userId, callback) => {
-//         const sql = `
-//             SELECT
-//                 user_id,
-//                 first_name,
-//                 last_name,
-//                 email,
-//                 profile_image,
-//                 created_at,
-//                 updated_at
-//             FROM users
-//             WHERE user_id = ?
-//         `;
-
-//         db.query(sql, [userId], callback);
-//     },
-
-
-//     // Create a new user
-//     create: (user, callback) => {
-//         const sql = `
-//             INSERT INTO users
-//             (
-//                 first_name,
-//                 last_name,
-//                 email,
-//                 password,
-//                 profile_image
-//             )
-//             VALUES (?, ?, ?, ?, ?)
-//         `;
-
-//         const values = [
-//             user.first_name,
-//             user.last_name,
-//             user.email,
-//             user.password,
-//             user.profile_image || null
-//         ];
-
-//         db.query(sql, values, callback);
-//     },
-
-
-//     // Update a user's profile
-//     update: (userId, user, callback) => {
-//         const sql = `
-//             UPDATE users
-//             SET
-//                 first_name = ?,
-//                 last_name = ?,
-//                 email = ?,
-//                 profile_image = ?
-//             WHERE user_id = ?
-//         `;
-
-//         const values = [
-//             user.first_name,
-//             user.last_name,
-//             user.email,
-//             user.profile_image || null,
-//             userId
-//         ];
-
-//         db.query(sql, values, callback);
-//     },
-
-
-//     // Delete a user
-//     delete: (userId, callback) => {
-//         const sql = `
-//             DELETE FROM users
-//             WHERE user_id = ?
-//         `;
-
-//         db.query(sql, [userId], callback);
-//     }
-
-// };
-// // Update user's password
-// updatePassword: (userId, hashedPassword, callback) => {
-//     const sql = `
-//         UPDATE users
-//         SET password = ?
-//         WHERE user_id = ?
-//     `;
-
-//     db.query(
-//         sql,
-//         [hashedPassword, userId],
-//         callback
-//     );
-// }
-
-// module.exports = User;

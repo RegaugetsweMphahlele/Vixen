@@ -1,20 +1,36 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'vixen_db',
-    port: 3306
+const db = mysql.createPool({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'password',
+    database: process.env.DB_NAME || 'vixen_db',
+    port: process.env.DB_PORT || 3306,
+
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect((err) => {
-    if (err) {
-        console.error('MySQL connection failed:', err.message);
-        return;
+const testConnection = async () => {
+    try {
+        const connection = await db.getConnection();
+
+        console.log('MySQL connected successfully to vixen_db');
+
+        connection.release();
+
+    } catch (error) {
+
+        console.error(
+            'MySQL connection failed:',
+            error.message
+        );
+
+        process.exit(1);
     }
+};
 
-    console.log('MySQL connected successfully to vixen_db');
-});
+testConnection();
 
 module.exports = db;
