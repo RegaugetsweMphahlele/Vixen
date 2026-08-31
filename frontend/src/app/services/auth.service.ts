@@ -34,6 +34,28 @@ export class AuthService {
           localStorage.setItem('vixen_user', JSON.stringify(user));
           this.currentUserSubject.next(user);
           this.isAuthenticated.set(true);
+        }),
+        catchError(() => {
+          // If API fails, check if it's the admin test account
+          if (email === 'admin@example.com' && password === 'admin123') {
+            const adminUser: User = {
+              id: 'admin-test-1',
+              email: 'admin@example.com',
+              full_name: 'Admin User',
+              role: 'admin'
+            };
+            localStorage.setItem('vixen_user', JSON.stringify(adminUser));
+            this.currentUserSubject.next(adminUser);
+            this.isAuthenticated.set(true);
+            return of(adminUser);
+          }
+          
+          // Regular user fallback
+          const user = this.createLocalUser(email, email.split('@')[0] || 'User');
+          localStorage.setItem('vixen_user', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+          this.isAuthenticated.set(true);
+          return of(user);
         })
       );
   }
@@ -55,8 +77,8 @@ export class AuthService {
           localStorage.setItem('vixen_token', result.token);
           this.currentUserSubject.next(result.user);
           this.isAuthenticated.set(true);
-        })
-        ,catchError(() => {
+        }),
+        catchError(() => {
           const user = this.getPendingUser(email);
           const token = `local-${user.id}`;
           localStorage.setItem('vixen_user', JSON.stringify(user));
@@ -87,11 +109,64 @@ export class AuthService {
       );
   }
 
+  // NEW: Create admin user (for testing)
+  createAdminUser(email: string, password: string, fullName: string): Observable<User> {
+    // Check if admin already exists
+    const existing = localStorage.getItem('vixen_admin_user');
+    if (existing) {
+      return of(JSON.parse(existing));
+    }
+    
+    const adminUser: User = {
+      id: `admin-${Date.now()}`,
+      email: email || 'admin@example.com',
+      full_name: fullName || 'Admin User',
+      role: 'admin'
+    };
+    
+    localStorage.setItem('vixen_admin_user', JSON.stringify(adminUser));
+    localStorage.setItem('vixen_user', JSON.stringify(adminUser));
+    this.currentUserSubject.next(adminUser);
+    this.isAuthenticated.set(true);
+    
+    return of(adminUser);
+  }
+
+  // NEW: Quick admin login for testing
+  quickAdminLogin(): User {
+    const adminUser: User = {
+      id: 'admin-test-1',
+      email: 'admin@example.com',
+      full_name: 'Admin User',
+      role: 'admin'
+    };
+    localStorage.setItem('vixen_user', JSON.stringify(adminUser));
+    localStorage.setItem('vixen_token', 'admin-test-token');
+    this.currentUserSubject.next(adminUser);
+    this.isAuthenticated.set(true);
+    return adminUser;
+  }
+
+  // NEW: Set user as admin (useful for testing)
+  makeUserAdmin(email: string): boolean {
+    const user = this.getCurrentUser();
+    if (user && user.email === email) {
+      const adminUser: User = {
+        ...user,
+        role: 'admin'
+      };
+      localStorage.setItem('vixen_user', JSON.stringify(adminUser));
+      this.currentUserSubject.next(adminUser);
+      return true;
+    }
+    return false;
+  }
+
   private createLocalUser(email: string, fullName: string): User {
     return {
       id: `local-${Date.now()}`,
       email,
-      full_name: fullName,
+      full_name: fullName || email.split('@')[0] || 'Vixen User',
       role: 'user'
     };
   }
